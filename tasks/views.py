@@ -5,9 +5,10 @@ from django.views.decorators.http import require_http_methods
 import json
 import os
 
-from .functions import parse_json, save_robot
+from .functions import parse_json, save_robot, parse_order
 from .exceptions import ValidJSON, DublicateData
 from .report import create_file
+from .orders import create_order
 
 
 # Create your views here.
@@ -39,3 +40,20 @@ def report(request: HttpRequest):
             response['Content-Disposition'] = 'inline; filename=' + \
                 os.path.basename(filename)
         return response
+
+
+@require_http_methods(['POST'])
+@csrf_exempt
+def order(request: HttpRequest):
+    try:
+        data = json.loads(request.body)
+        order_data = parse_order(data)
+        b_order = create_order(order_data)
+        if b_order:
+            return JsonResponse({'available': True})
+        else:
+            return JsonResponse({'available': False})
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'invalid JSON'})
+    except ValidJSON as ex:
+        return JsonResponse({'success': False, 'error': str(ex)})
