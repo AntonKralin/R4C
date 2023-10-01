@@ -1,6 +1,6 @@
 from django.http import HttpRequest, JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_GET, require_POST
 
 import json
 import os
@@ -12,7 +12,7 @@ from .orders import create_order
 
 
 # Create your views here.
-@require_http_methods(["POST"])
+@require_POST
 @csrf_exempt
 def add(request: HttpRequest):
     try:
@@ -30,7 +30,7 @@ def add(request: HttpRequest):
         return JsonResponse({'success': False, 'error': 'ValueError'})
 
 
-@require_http_methods(["GET"])
+@require_GET
 def report(request: HttpRequest):
     filename = create_file(7)
     if os.path.exists(filename):
@@ -42,7 +42,7 @@ def report(request: HttpRequest):
         return response
 
 
-@require_http_methods(['POST'])
+@require_POST
 @csrf_exempt
 def order(request: HttpRequest):
     try:

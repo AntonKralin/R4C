@@ -21,7 +21,7 @@ def create_file(days: int = 7) -> str:
                     .annotate(total=Count('*')) \
                     .order_by('model')
 
-    prev = ''
+    prev = None
     count = 2
     for i_dict in gp_robot:
         if prev != i_dict['model']:

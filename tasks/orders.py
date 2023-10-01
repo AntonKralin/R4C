@@ -9,7 +9,7 @@ def create_order(data) -> bool:
         robot = r_count[0]
         robot.delete()
         return True
-    customer = Customer(email=data.email)
+    customer = Customer.objects.get_or_create(email=data.email)
     customer.save()
     order = Order(customer=customer, robot_serial=data.serial)
     order.save()
